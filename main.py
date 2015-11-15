@@ -6,7 +6,8 @@ import numpy as np
 
 def main():
 	try:
-		print((d(8)+7*d(6)+3)*3)
+		damageRoll = (d(8)+7*d(6)+3)*3
+		print(damageRoll)
 	except MemoryError:
 		print("'(d(8)+7*d(6)+3)*3' failed\n")
 	print(np.sort((3*d(6)).values))

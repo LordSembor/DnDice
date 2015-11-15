@@ -9,22 +9,22 @@ class d(object):
 		if len(args) == 1:
 			faces = args[0]
 			self.values = np.arange(faces) + 1
-			self.expectancies = np.ones(faces)
+			self.expectancies = np.ones(faces, int)
 			self.length = faces
+		elif len(args) == 3:
+			self.values = args[0]
+			self.expectancies = args[1]
+			self.length = args[2]
 		elif all(x in kwargs.keys() for x in ['values', 'length']):
 			self.values = kwargs.get("values")
 			self.expectancies = np.array([])
 			self.length = kwargs.get("length")
-		elif len(args) == 2:
-			self.values = args[0]
-			self.expectancies = np.array([])
-			self.length = args[1]
 
 	def __add__(self, other):
 		if isinstance(other, d):
 			return self.addDice(other)
 		elif isinstance(other, (int, float)):
-			return d(values=self.values + other, length=self.length)
+			return d(self.values + other, self.expectancies, self.length)
 
 	def __radd__(self, other):
 		return self+other
@@ -40,10 +40,12 @@ class d(object):
 		return str(self.values)
 
 	def addDice(self, other):
-		newLength = self.length + other.length
-		newValues = np.zeros((newLength,))
+		newLength = self.length + other.length - 1
+		newValues = np.arange(self.values[0]+other.values[0], self.values[-1] + other.values[-1] + 1)
+		newExpectancies = np.zeros((newLength, ), int)
 		for i in np.arange(self.length):
-			newValues[i:i+other.length-1] = (self.values[i:i+other.length-1] + 1)
+			newExpectancies[i:i+other.length] += (self.expectancies[i] * other.expectancies)
+		return d(newValues, newExpectancies, newLength)
 
 	def times(self, factor):
 		if factor == 0:

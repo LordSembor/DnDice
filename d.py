@@ -7,13 +7,17 @@ import numpy as np
 class d(object):
 	def __init__(self, *args, **kwargs):
 		if len(args) == 1:
-			self.values = np.arange(args[0]) + 1
-			self.length = args[0]
+			faces = args[0]
+			self.values = np.arange(faces) + 1
+			self.expectancies = np.ones(faces)
+			self.length = faces
 		elif all(x in kwargs.keys() for x in ['values', 'length']):
 			self.values = kwargs.get("values")
+			self.expectancies = np.array([])
 			self.length = kwargs.get("length")
 		elif len(args) == 2:
 			self.values = args[0]
+			self.expectancies = np.array([])
 			self.length = args[1]
 
 	def __add__(self, other):

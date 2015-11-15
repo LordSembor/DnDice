@@ -6,7 +6,7 @@ import numpy as np
 
 def main():
 	try:
-		print((d(8)+7*d(6)+3)*3)		# fails
+		print((d(8)+7*d(6)+3)*3)
 	except MemoryError:
 		print("'(d(8)+7*d(6)+3)*3' failed\n")
 	print(np.sort((3*d(6)).values))

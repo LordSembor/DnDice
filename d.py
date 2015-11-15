@@ -9,7 +9,7 @@ class d(object):
 		if len(args) == 1:
 			faces = args[0]
 			self.values = np.arange(faces) + 1
-			self.expectancies = np.ones(faces, int)
+			self.expectancies = np.ones(faces)
 			self.normalizeExpectancies()
 			self.length = faces
 		elif len(args) == 3:
@@ -43,7 +43,7 @@ class d(object):
 	def addDice(self, other):
 		newLength = self.length + other.length - 1
 		newValues = np.arange(self.values[0]+other.values[0], self.values[-1] + other.values[-1] + 1)
-		newExpectancies = np.zeros((newLength, ), int)
+		newExpectancies = np.zeros((newLength, ))
 		for i in np.arange(self.length):
 			newExpectancies[i:i+other.length] += (self.expectancies[i] * other.expectancies)
 		newExpectancies = d.normalize(newExpectancies)

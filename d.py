@@ -50,4 +50,4 @@ class d(object):
 			return self + self.times(factor-1)
 
 
-print((d(8)+7*d(6)+3)*3)
+

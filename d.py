@@ -40,10 +40,10 @@ class d(object):
 		return str(self.values)
 
 	def addDice(self, other):
-		ones = np.ones((1, other.length))
-		first = self.values.reshape(self.length, 1)
-		values = (np.dot(first, ones) + other.values).flatten()
-		return d(values=values, length=values.size)
+		newLength = self.length + other.length
+		newValues = np.zeros((newLength,))
+		for i in np.arange(self.length):
+			newValues[i:i+other.length-1] = (self.values[i:i+other.length-1] + 1)
 
 	def times(self, factor):
 		if factor == 0:

@@ -10,6 +10,7 @@ class d(object):
 			faces = args[0]
 			self.values = np.arange(faces) + 1
 			self.expectancies = np.ones(faces, int)
+			self.normalizeExpectancies()
 			self.length = faces
 		elif len(args) == 3:
 			self.values = args[0]
@@ -45,6 +46,7 @@ class d(object):
 		newExpectancies = np.zeros((newLength, ), int)
 		for i in np.arange(self.length):
 			newExpectancies[i:i+other.length] += (self.expectancies[i] * other.expectancies)
+		newExpectancies = d.normalize(newExpectancies)
 		return d(newValues, newExpectancies, newLength)
 
 	def times(self, factor):
@@ -55,5 +57,12 @@ class d(object):
 		else:
 			return self + self.times(factor-1)
 
+	def normalizedExpectancies(self):
+		return self.expectancies / np.sum(self.expectancies)
 
+	def normalizeExpectancies(self):
+		self.expectancies /= np.sum(self.expectancies)
 
+	@staticmethod
+	def normalize(expectancies):
+		return expectancies / np.sum(expectancies)

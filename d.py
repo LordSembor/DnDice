@@ -64,6 +64,10 @@ class d(object):
 	def meanValueWeighted(self):
 		return np.average(self.values, weights=self.expectancies)
 
+	def getMeanAndExpectancy(self):
+		index = np.average(np.arange(self.length), weights=self.expectancies)
+		return self.meanValueWeighted(), self.expectancies[int(index)]
+
 	def normalizedExpectancies(self):
 		return self.expectancies / np.sum(self.expectancies)
 
@@ -77,6 +81,10 @@ class d(object):
 	def plot(self):
 		xdata = self.values
 		ydata = self.expectancies * 100
+
+		meanVal, meanExp = self.getMeanAndExpectancy()
+
+		plt.plot(meanVal, meanExp)
 
 		plt.plot(xdata, ydata)
 

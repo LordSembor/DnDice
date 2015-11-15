@@ -5,7 +5,6 @@ from d import d
 
 
 def main():
-
 	print((d(8)+7*d(6)+3)*3)
 
 

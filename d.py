@@ -1,6 +1,7 @@
 __author__ = 'sam <vogelsangersamuel@hotmail.com>'
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 # noinspection PyPep8Naming
@@ -72,3 +73,17 @@ class d(object):
 	@staticmethod
 	def normalize(expectancies):
 		return expectancies / np.sum(expectancies)
+
+	def plot(self):
+		xdata = self.values
+		ydata = self.expectancies * 100
+
+		plt.plot(xdata, ydata)
+
+		plt.xlabel('dice rolls')
+		plt.ylabel('likelihood (in percent)')
+		plt.title('DnDice')
+		plt.grid(True)
+
+		#plt.savefig("test.png")
+		plt.show()

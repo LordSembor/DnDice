@@ -37,6 +37,9 @@ class d(object):
 	def __rmul__(self, other):
 		return self*other
 
+	def __lt__(self, other):
+		return
+
 	def __str__(self):
 		return str(self.values)
 
@@ -56,6 +59,9 @@ class d(object):
 			return self
 		else:
 			return self + self.times(factor-1)
+
+	def meanValueWeighted(self):
+		return np.average(self.values, weights=self.expectancies)
 
 	def normalizedExpectancies(self):
 		return self.expectancies / np.sum(self.expectancies)

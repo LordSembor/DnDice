@@ -9,7 +9,7 @@ class d(object):
 	def __init__(self, *args, **kwargs):
 		if len(args) == 1:
 			faces = args[0]
-			self.data = np.array([])
+			self.data = np.array([np.arange(faces) + 1, np.ones(faces)])
 			self.values = np.arange(faces) + 1
 			self.expectancies = np.ones(faces)
 			self.normalizeExpectancies()
@@ -20,19 +20,19 @@ class d(object):
 			self.values = self.data[0]
 			self.expectancies = self.data[1]
 		elif len(args) == 3:
-			self.data = np.hstack((args[0], args[1]))
+			self.data = np.vstack((args[0], args[1]))
 			self.length = args[2]
 			self.values = self.data[0]
 			self.expectancies = self.data[1]
 		elif all(x in kwargs.keys() for x in ['values', 'length']):
-			self.data = np.hstack((kwargs.get("values"), kwargs.get("length")))
+			self.data = np.vstack((kwargs.get("values"), kwargs.get("length")))
 			self.length = kwargs.get("length")
 			self.values = self.data[0]
 			self.expectancies = self.data[1]
 
 	def __add__(self, other):
 		if isinstance(other, d):
-			return self.addDice(other)
+			return self.__addDice(other)
 		elif isinstance(other, (int, float)):
 			return d(self.data[0] + other, self.data[1], self.length)
 
@@ -64,13 +64,15 @@ class d(object):
 	def __str__(self):
 		return "dice: " + str(self.data[0])
 
-	def addDice(self, other):
+	def __addDice(self, other):
 		newLength = self.length + other.length - 1
 		newValues = np.arange(self.data[0, 0] + other.data[0, 0], self.data[0, -1] + other.data[0, -1] + 1)
+
 		newExpectancies = np.zeros((newLength,))
 		for i in np.arange(self.length):
 			newExpectancies[i:i + other.length] += (self.data[1, i] * other.data[1])
 		newExpectancies = d.normalize(newExpectancies)
+
 		return d(newValues, newExpectancies, newLength)
 
 	def times(self, factor):
@@ -79,18 +81,24 @@ class d(object):
 		elif factor == 1:
 			return self
 		else:
-			return self + self.times(factor - 1)
+			return self.__addDice(self.times(factor - 1))
 
+	@DeprecationWarning     # Currently not used
 	def meanValueWeighted(self):
 		return np.average(self.data[0], weights=self.data[1])
 
 	def meanValueAndExpectancy(self):
 		index = self.meanIndex()
-		data = np.vstack((self.data[0], self.data[1]))
-		valueBounds = self.data[0,np.floor(index):np.floor(index) + 2]
-		value = valueBounds[0] + (index % 1) * valueBounds[1] - valueBounds[0]
-		expectancyBounds = self.data[1,np.floor(index):np.floor(index) + 2]
-		expectancy = expectancyBounds[0] + (index % 1) * expectancyBounds[1] - expectancyBounds[0]
+		index_int = np.floor(index)
+
+		values = self.data[0]
+		valueBounds = values[index_int:index_int + 2]
+		value = valueBounds[0] + (index % 1) * (valueBounds[1] - valueBounds[0])
+
+		expectancies = self.data[1]
+		expectancyBounds = expectancies[index_int:index_int + 2]
+		expectancy = expectancyBounds[0] + (index % 1) * (expectancyBounds[1] - expectancyBounds[0])
+
 		return value, expectancy
 
 	def meanIndex(self):

@@ -9,6 +9,7 @@ class d(object):
 	def __init__(self, *args, **kwargs):
 		if len(args) == 1:
 			faces = args[0]
+			self.data = np.array([])
 			self.values = np.arange(faces) + 1
 			self.expectancies = np.ones(faces)
 			self.normalizeExpectancies()
@@ -33,7 +34,7 @@ class d(object):
 		if isinstance(other, d):
 			return self.addDice(other)
 		elif isinstance(other, (int, float)):
-			return d(self.values + other, self.expectancies, self.length)
+			return d(self.data[0] + other, self.data[1], self.length)
 
 	def __radd__(self, other):
 		return self + other
@@ -46,8 +47,10 @@ class d(object):
 		return self * other
 
 	def __lt__(self, other):
-		if isinstance(other, int):
-			return
+		if isinstance(other, (int, float)):
+			return np.where(self.data[0] > other, True, False)
+		else:
+			raise TypeError
 
 	def __gt__(self, other):
 		return
@@ -59,14 +62,14 @@ class d(object):
 		return
 
 	def __str__(self):
-		return "dice: " + str(self.values)
+		return "dice: " + str(self.data[0])
 
 	def addDice(self, other):
 		newLength = self.length + other.length - 1
-		newValues = np.arange(self.values[0] + other.values[0], self.values[-1] + other.values[-1] + 1)
+		newValues = np.arange(self.data[0, 0] + other.data[0, 0], self.data[0, -1] + other.data[0, -1] + 1)
 		newExpectancies = np.zeros((newLength,))
 		for i in np.arange(self.length):
-			newExpectancies[i:i + other.length] += (self.expectancies[i] * other.expectancies)
+			newExpectancies[i:i + other.length] += (self.data[1, i] * other.data[1])
 		newExpectancies = d.normalize(newExpectancies)
 		return d(newValues, newExpectancies, newLength)
 
@@ -79,22 +82,22 @@ class d(object):
 			return self + self.times(factor - 1)
 
 	def meanValueWeighted(self):
-		return np.average(self.values, weights=self.expectancies)
+		return np.average(self.data[0], weights=self.data[1])
 
 	def meanValueAndExpectancy(self):
 		index = self.meanIndex()
-		data = np.vstack((self.values, self.expectancies))
-		valueBounds = self.values[np.floor(index):np.floor(index) + 2]
+		data = np.vstack((self.data[0], self.data[1]))
+		valueBounds = self.data[0,np.floor(index):np.floor(index) + 2]
 		value = valueBounds[0] + (index % 1) * valueBounds[1] - valueBounds[0]
-		expectancyBounds = self.expectancies[np.floor(index):np.floor(index) + 2]
+		expectancyBounds = self.data[1,np.floor(index):np.floor(index) + 2]
 		expectancy = expectancyBounds[0] + (index % 1) * expectancyBounds[1] - expectancyBounds[0]
 		return value, expectancy
 
 	def meanIndex(self):
-		return np.average(np.arange(self.length), weights=self.expectancies)
+		return np.average(np.arange(self.length), weights=self.data[1])
 
 	def normalizeExpectancies(self):
-		self.expectancies = d.normalize(self.expectancies)
+		self.data[1] = d.normalize(self.data[1])
 
 	@staticmethod
 	def normalize(expectancies):

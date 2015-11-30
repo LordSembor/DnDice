@@ -22,8 +22,8 @@ def experiment():
 	prof = 2
 	hit = d(12) + str
 	crit = 3 * d(12) + str
-	attack = singleAttack(hit, crit, str, prof)
-	attack.plot()
+	# attack = singleAttack(hit, crit, str, prof)
+	# attack.plot()
 
 def singleAttack(hit, crit, mod, prof, ac=14, attackRoll=d(20)):
 	result = d(0)

@@ -10,25 +10,17 @@ class d(object):
 		if len(args) == 1:
 			faces = args[0]
 			self.data = np.array([np.arange(faces) + 1, np.ones(faces)])
-			self.values = np.arange(faces) + 1
-			self.expectancies = np.ones(faces)
 			self.normalizeExpectancies()
 			self.length = faces
 		elif len(args) == 2:
 			self.data = args[0]
 			self.length = args[1]
-			self.values = self.data[0]
-			self.expectancies = self.data[1]
 		elif len(args) == 3:
 			self.data = np.vstack((args[0], args[1]))
 			self.length = args[2]
-			self.values = self.data[0]
-			self.expectancies = self.data[1]
 		elif all(x in kwargs.keys() for x in ['values', 'length']):
 			self.data = np.vstack((kwargs.get("values"), kwargs.get("length")))
 			self.length = kwargs.get("length")
-			self.values = self.data[0]
-			self.expectancies = self.data[1]
 
 	def __add__(self, other):
 		if isinstance(other, d):

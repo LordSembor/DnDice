@@ -15,3 +15,6 @@ class Shaman(object):
 		attack = lambda roll: crit if roll > 18 else hit
 		# d.where(d(20)>18,attack)
 		return attack(1) + attack(1) + attack(1)
+
+def experiment():
+	pass

@@ -78,7 +78,7 @@ class d(object):
 		else:
 			return self.__addDice(self.times(factor - 1))
 
-	@DeprecationWarning     # Currently not used
+	@DeprecationWarning  # Currently not used
 	def meanValueWeighted(self):
 		return np.average(self.data[0], weights=self.data[1])
 
@@ -109,10 +109,16 @@ class d(object):
 	def plot(self):
 		plot(self)
 
+	def values(self):
+		return self.data[0]
+
+	def expectancies(self):
+		return self.data[1]
+
 
 def plot(dice):
-	xdata = dice.values
-	ydata = dice.expectancies * 100
+	xdata = dice.values()
+	ydata = dice.expectancies() * 100
 
 	meanVal, meanExp = dice.meanValueAndExpectancy()
 
@@ -127,8 +133,3 @@ def plot(dice):
 
 	# plt.savefig("test.png")
 	plt.show()
-
-
-def byRoll(*args, **kwargs):
-	if kwargs.get("for"):
-		pass

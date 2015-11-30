@@ -46,6 +46,9 @@ class d(object):
 	def __rmul__(self, other):
 		return self * other
 
+	def __iter__(self):
+		return iter(np.swapaxes(self.data, 0, 1))
+
 	def __lt__(self, other):
 		if isinstance(other, (int, float)):
 			return np.where(self.data[0] > other, True, False)

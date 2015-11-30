@@ -17,4 +17,22 @@ class Shaman(object):
 		return attack(1) + attack(1) + attack(1)
 
 def experiment():
-	pass
+	print("\nShaman.py\n=========\n")
+	str = 3
+	prof = 2
+	hit = d(12) + str
+	crit = 3 * d(12) + str
+	attack = singleAttack(hit, crit, str, prof)
+	attack.plot()
+
+def singleAttack(hit, crit, mod, prof, ac=14, attackRoll=d(20)):
+	result = d(0)
+	for val, prob in attackRoll:
+		if (val + mod + prof) >= ac:
+			if val == 20:
+				result += crit
+			else:
+				result += hit
+		else:
+			result += d(0)
+	return result

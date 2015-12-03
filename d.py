@@ -157,7 +157,7 @@ def plot(dice):
 	plt.grid(True)
 
 	# plt.savefig("test.png")
-	plt.show
+	plt.show()
 
 
 def advantage(dice=d(20)):

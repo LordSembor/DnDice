@@ -9,9 +9,13 @@ class d(object):
 	def __init__(self, *args, **kwargs):
 		if len(args) == 1:
 			faces = args[0]
-			self.data = np.array([np.arange(faces) + 1, np.ones(faces)])
-			self.normalizeExpectancies()
-			self.length = faces
+			if faces > 0:
+				self.data = np.array([np.arange(faces) + 1, np.ones(faces)])
+				self.normalizeExpectancies()
+				self.length = faces
+			else:
+				self.data = np.r_[0, 1].reshape(2, 1)
+				self.length = 1
 		elif len(args) == 2:
 			self.data = args[0]
 			self.length = args[1]
@@ -61,12 +65,12 @@ class d(object):
 
 	def __addDice(self, other):
 		newLength = self.length + other.length - 1
-		newValues = np.arange(self.data[0, 0] + other.data[0, 0], self.data[0, -1] + other.data[0, -1] + 1)
+		newValues = np.arange(self.values()[0] + other.values()[0], self.values()[-1] + other.values()[-1] + 1)
 
 		newExpectancies = np.zeros((newLength,))
 		for i in np.arange(self.length):
 			newExpectancies[i:i + other.length] += (self.data[1, i] * other.data[1])
-		newExpectancies = d.normalize(newExpectancies)
+		# newExpectancies = d.normalize(newExpectancies)
 
 		return d(newValues, newExpectancies, newLength)
 
@@ -114,6 +118,27 @@ class d(object):
 
 	def expectancies(self):
 		return self.data[1]
+
+	def layer(self, other, weight=1):
+		if not isinstance(other, d):
+			raise TypeError("Can only layer other dice")
+
+		minVal = np.min([np.min(self.values()), np.min(other.values())])
+		maxVal = np.max([np.max(self.values()), np.max(other.values())])
+
+		newValues = np.arange(minVal, maxVal + 1)
+		newLength = np.max(newValues.shape)
+		newExpectancies = np.zeros(newLength)
+
+		selfIndex = np.where(newValues == self.data[0][0])[0][0]
+		otherIndex = np.where(newValues == other.data[0][0])[0][0]
+
+		newExpectancies[selfIndex:self.length + selfIndex] += (self.expectancies() * weight)
+		newExpectancies[otherIndex:other.length + otherIndex] += (other.expectancies() * weight)
+
+		newData = np.vstack((newValues, newExpectancies))
+		self.data = newData
+		self.length = newLength
 
 
 def plot(dice):

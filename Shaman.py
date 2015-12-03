@@ -1,6 +1,6 @@
 __author__ = 'sam <vogelsangersamuel@hotmail.com>'
 
-from d import d
+from d import *
 import numpy as np
 
 
@@ -16,23 +16,35 @@ class Shaman(object):
 		# d.where(d(20)>18,attack)
 		return attack(1) + attack(1) + attack(1)
 
+
+def test():
+	hit = 3 * d(3)
+	crit = 7 * d(2) + 3 + d(6) + 1
+	print(hit)
+	print(crit)
+
+
 def experiment():
 	print("\nShaman.py\n=========\n")
-	str = 3
+	stren = 3
 	prof = 2
-	hit = d(12) + str
-	crit = 3 * d(12) + str
-	attack = singleAttack(hit, crit, str, prof)
-	# attack.plot()
+	hit = d(12) + stren
+	crit = 3 * d(12) + stren
+	attack = singleAttack(hit, crit, stren, prof, attackRoll=advantage())
+	#  attack.plot()
+	print(attack.meanValueAndExpectancy())
+	print(attack.expectancies()[0])
+
 
 def singleAttack(hit, crit, mod, prof, ac=14, attackRoll=d(20)):
 	result = d(0)
 	for val, prob in attackRoll:
 		if (val + mod + prof) >= ac:
 			if val == 20:
-				result += crit
+				result.layer(crit, prob)
 			else:
-				result += hit
+				result.layer(hit, prob)
 		else:
-			result += d(0)
+			result.layer(d(0), prob)
+	result.normalizeExpectancies()
 	return result

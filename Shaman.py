@@ -34,6 +34,7 @@ def experiment():
 	#  attack.plot()
 	print(attack.meanValueAndExpectancy())
 	print(attack.expectancies()[0])
+	print(advantage(d(6)).expectancies())
 
 
 def singleAttack(hit, crit, mod, prof, ac=14, attackRoll=d(20)):
@@ -48,3 +49,4 @@ def singleAttack(hit, crit, mod, prof, ac=14, attackRoll=d(20)):
 			result.layer(d(0), prob)
 	result.normalizeExpectancies()
 	return result
+

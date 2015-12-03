@@ -157,4 +157,19 @@ def plot(dice):
 	plt.grid(True)
 
 	# plt.savefig("test.png")
-	plt.show()
+	plt.show
+
+
+def advantage(dice=d(20)):
+	"""
+	@:param d dice
+	@:return d advantage
+	"""
+	if isinstance(dice, int):
+		dice = d(dice)
+	v = dice.expectancies()
+	arr = np.ones((dice.length, dice.length)) * v
+	arr = np.triu(arr, 0) + np.triu(arr, 1)
+	sol = np.dot(v, arr)
+
+	return d(dice.values(), sol, dice.length)

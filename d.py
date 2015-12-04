@@ -7,14 +7,17 @@ import matplotlib.pyplot as plt
 # noinspection PyPep8Naming
 class d(object):
 	def __init__(self, *args, **kwargs):
-		if len(args) == 1:
+		if len(args) == 0:
+			self.data = np.array([[], []])
+			self.length = 0
+		elif len(args) == 1:
 			faces = args[0]
 			if faces > 0:
 				self.data = np.array([np.arange(faces) + 1, np.ones(faces)])
 				self.normalizeExpectancies()
 				self.length = faces
 			else:
-				self.data = np.r_[0, 1].reshape(2, 1)
+				self.data = np.array([[0], [1]])
 				self.length = 1
 		elif len(args) == 2:
 			self.data = args[0]
@@ -123,17 +126,23 @@ class d(object):
 		if not isinstance(other, d):
 			raise TypeError("Can only layer other dice")
 
-		minVal = np.min([np.min(self.values()), np.min(other.values())])
-		maxVal = np.max([np.max(self.values()), np.max(other.values())])
+		if self.length > 0:
+			minVal = np.min([self.values().min(), other.values().min()])
+			maxVal = np.max([self.values().max(), other.values().max()])
+		else:
+			minVal = np.min(other.values())
+			maxVal = np.max(other.values())
 
 		newValues = np.arange(minVal, maxVal + 1)
 		newLength = np.max(newValues.shape)
 		newExpectancies = np.zeros(newLength)
 
-		selfIndex = np.where(newValues == self.data[0][0])[0][0]
+		if self.length > 0:
+			selfIndex = np.where(newValues == self.data[0][0])[0][0]
 		otherIndex = np.where(newValues == other.data[0][0])[0][0]
 
-		newExpectancies[selfIndex:self.length + selfIndex] += (self.expectancies() * weight)
+		if self.length > 0:
+			newExpectancies[selfIndex:self.length + selfIndex] += (self.expectancies() * weight)
 		newExpectancies[otherIndex:other.length + otherIndex] += (other.expectancies() * weight)
 
 		newData = np.vstack((newValues, newExpectancies))

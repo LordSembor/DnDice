@@ -1,3 +1,5 @@
+import math
+
 __author__ = 'sam <vogelsangersamuel@hotmail.com>, piMoll'
 
 import numpy as np
@@ -103,6 +105,18 @@ class d(object):
 
 		return value, expectancy
 
+	def meanAndStdDev(self):
+		"""
+		Return the weighted average and standard deviation.
+
+		values, weights -- Numpy ndarrays with the same shape.
+		"""
+		values = self.values()
+		weights = self.expectancies()
+		average = np.average(values, weights=weights)
+		variance = np.average((values - average) ** 2, weights=weights)  # Fast and numerically precise
+		return average, math.sqrt(variance)
+
 	def meanIndex(self):
 		return np.average(np.arange(self.length), weights=self.data[1])
 
@@ -183,16 +197,16 @@ def advantage(dice=d(20)):
 
 	return d(dice.values(), sol, dice.length)
 
-
-def highestNOf(n, dice):
-	if isinstance(dice, int):
-		dice = d(dice)
-	dv = dice.values()
-	values = n + np.arange(n * dv[0], n * dv[-1] + 1)
-	for combination in permutation(dv[-1], n):
-		pass      # TODO
-
-
-def permutation(m, n):
-	inds = np.indices((m,) * n)
-	return inds.reshape(n, -1).T
+# TODO all this
+# def highestNOf(n, dice):
+# 	if isinstance(dice, int):
+# 		dice = d(dice)
+# 	dv = dice.values()
+# 	values = n + np.arange(n * dv[0], n * dv[-1] + 1)
+# 	for combination in permutation(dv[-1], n):
+# 		pass
+#
+#
+# def permutation(m, n):
+# 	inds = np.indices((m,) * n)
+# 	return inds.reshape(n, -1).T

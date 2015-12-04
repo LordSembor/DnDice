@@ -45,20 +45,20 @@ class d(object):
 	def __iter__(self):
 		return iter(np.swapaxes(self.data, 0, 1))
 
-	def __lt__(self, other):
+	def __lt__(self, other):      # TODO
 		if isinstance(other, (int, float)):
 			return np.where(self.data[0] > other, True, False)
 		else:
 			raise TypeError
 
 	def __gt__(self, other):
-		return
+		return      # TODO
 
 	def __le__(self, other):
-		return
+		return      # TODO
 
 	def __ge__(self, other):
-		return
+		return      # TODO
 
 	def __str__(self):
 		return "dice: " + str(self.data[0])
@@ -173,3 +173,17 @@ def advantage(dice=d(20)):
 	sol = np.dot(v, arr)
 
 	return d(dice.values(), sol, dice.length)
+
+
+def highestNOf(n, dice):
+	if isinstance(dice, int):
+		dice = d(dice)
+	dv = dice.values()
+	values = n + np.arange(n * dv[0], n * dv[-1] + 1)
+	for combination in permutation(dv[-1], n):
+		pass      # TODO
+
+
+def permutation(m, n):
+	inds = np.indices((m,) * n)
+	return inds.reshape(n, -1).T

@@ -34,7 +34,10 @@ def experiment():
 	#  attack.plot()
 	print(attack.meanValueAndExpectancy())
 	print(attack.expectancies()[0])
-	print(advantage(d(6)).expectancies())
+	print(gwf(1).expectancies())
+	d1and3 = d(np.r_[4], np.r_[1], 1)
+	print(d1and3)
+	print(d1and3.expectancies())
 
 
 def singleAttack(hit, crit, mod, prof, ac=14, attackRoll=d(20)):
@@ -50,3 +53,13 @@ def singleAttack(hit, crit, mod, prof, ac=14, attackRoll=d(20)):
 	result.normalizeExpectancies()
 	return result
 
+
+def gwf(count=2, die=d(6)):
+	result = d(0)
+	for val, prob in die:
+		if val < 3:
+			result.layer(die)
+		else:
+			result.layer(d([val], [prob], 1))
+	result.normalizeExpectancies()
+	return count * result

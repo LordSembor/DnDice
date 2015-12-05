@@ -30,12 +30,13 @@ class d(object):
 		elif all(x in kwargs.keys() for x in ['values', 'length']):
 			self.data = np.vstack((kwargs.get("values"), kwargs.get("length")))
 			self.length = kwargs.get("length")
+		self.dice = kwargs.get('dice', [self])
 
 	def __add__(self, other):
 		if isinstance(other, d):
 			return self.__addDice(other)
 		elif isinstance(other, (int, float)):
-			return d(self.data[0] + other, self.data[1], self.length)
+			return d(self.data[0] + other, self.data[1], self.length, dice=self.dice)
 
 	def __radd__(self, other):
 		return self + other
@@ -77,7 +78,7 @@ class d(object):
 			newExpectancies[i:i + other.length] += (self.data[1, i] * other.data[1])
 		# newExpectancies = d.normalize(newExpectancies)
 
-		return d(newValues, newExpectancies, newLength)
+		return d(newValues, newExpectancies, newLength, dice=self.dice + other.dice)
 
 	def times(self, factor):
 		if factor == 0:
@@ -136,6 +137,9 @@ class d(object):
 	def expectancies(self):
 		return self.data[1]
 
+	def single(self, index=0):
+		return self.dice[index]
+
 	def layer(self, other, weight=1):
 		if not isinstance(other, d):
 			raise TypeError("Can only layer other dice")
@@ -193,9 +197,9 @@ def advantage(dice=d(20)):
 	v = dice.expectancies()
 	arr = np.ones((dice.length, dice.length)) * v
 	arr = np.triu(arr, 0) + np.triu(arr, 1)
-	sol = np.dot(v, arr)
+	expectancies = np.dot(v, arr)
 
-	return d(dice.values(), sol, dice.length)
+	return d(dice.values(), expectancies, dice.length)
 
 # TODO all this
 # def highestNOf(n, dice):

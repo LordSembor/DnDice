@@ -168,21 +168,21 @@ class d(object):
 		self.length = newLength
 
 
-def plot(dice):
-	xdata = dice.values()
-	ydata = dice.expectancies() * 100
+def plot(*dice):
+	for die in dice:
+		xdata = die.values()
+		ydata = die.expectancies() * 100
 
-	meanVal, meanExp = dice.meanValueAndExpectancy()
+		meanVal, meanExp = die.meanValueAndExpectancy()
 
-	plt.plot(meanVal, meanExp * 100, 'ro')
-
-	plt.plot(xdata, ydata)
+		plt.plot(xdata, ydata, 'b--')
+		plt.plot(xdata, ydata, 'bo')
+		plt.plot(meanVal, meanExp * 100, 'ro')
 
 	plt.xlabel('dice rolls')
 	plt.ylabel('likelihood (in percent)')
 	plt.title('DnDice')
 	plt.grid(True)
-
 	# plt.savefig("test.png")
 	plt.show()
 

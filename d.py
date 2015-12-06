@@ -168,7 +168,7 @@ class d(object):
 		self.length = newLength
 
 
-def plot(*dice, **named_dice):
+def plot(*dice):
 	plt.rc(
 		'lines',
 		linewidth=3,
@@ -179,15 +179,17 @@ def plot(*dice, **named_dice):
 	color_index = 0
 	dice_count = 0
 	for die in dice:
-		plot_single_die(color_index, (die, "die {}".format(dice_count)))
-		color_index = (color_index + 1) % len(color_list)
-		dice_count += 1
-	for name, die in named_dice:
+		if isinstance(die, tuple):
+			die, name = die
+		else:
+			name = "plot {}".format(dice_count)
 		plot_single_die(color_index, (die, name))
 		color_index = (color_index + 1) % len(color_list)
+		dice_count += 1
 	plt.xlabel('dice rolls')
 	plt.ylabel('likelihood (in percent)')
 	plt.title('DnDice')
+	plt.legend(loc='upper right')
 	plt.grid(True)
 	# plt.savefig("test.png")
 	plt.show()
@@ -210,8 +212,14 @@ def plot_single_die(color_index, die_data):
 	die, name = die_data
 	xdata = die.values()
 	ydata = die.expectancies() * 100
-	meanVal, meanExp = die.meanValueAndExpectancy()
-	plt.plot(xdata, ydata, color=color_list[color_index])
+	mean, std_dev = die.meanAndStdDev()
+	label = '{name} ({mean:.2f}, {std:.2f})'.format(name=name, mean=mean, std=std_dev)
+	plt.plot(
+		xdata,
+		ydata,
+		color=color_list[color_index],
+		label=label
+	)
 
 
 def advantage(dice=d(20)):

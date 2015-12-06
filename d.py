@@ -168,23 +168,50 @@ class d(object):
 		self.length = newLength
 
 
-def plot(*dice):
+def plot(*dice, **named_dice):
+	plt.rc(
+		'lines',
+		linewidth=3,
+		marker='o',
+		markersize=8,
+		markeredgewidth=0,
+	)
+	color_index = 0
+	dice_count = 0
 	for die in dice:
-		xdata = die.values()
-		ydata = die.expectancies() * 100
-
-		meanVal, meanExp = die.meanValueAndExpectancy()
-
-		plt.plot(xdata, ydata, 'b--')
-		plt.plot(xdata, ydata, 'bo')
-		plt.plot(meanVal, meanExp * 100, 'ro')
-
+		plot_single_die(color_index, (die, "die {}".format(dice_count)))
+		color_index = (color_index + 1) % len(color_list)
+		dice_count += 1
+	for name, die in named_dice:
+		plot_single_die(color_index, (die, name))
+		color_index = (color_index + 1) % len(color_list)
 	plt.xlabel('dice rolls')
 	plt.ylabel('likelihood (in percent)')
 	plt.title('DnDice')
 	plt.grid(True)
 	# plt.savefig("test.png")
 	plt.show()
+
+
+colors = {
+	'yellow':   '#b58900',
+	'orange':   '#cb4b16',
+	'red':      '#dc322f',
+	'magenta':  '#d33682',
+	'violet':   '#6c71c4',
+	'blue':     '#268bd2',
+	'cyan':     '#2aa198',
+	'green':    '#859900',
+}
+color_list = list(colors.values())
+
+
+def plot_single_die(color_index, die_data):
+	die, name = die_data
+	xdata = die.values()
+	ydata = die.expectancies() * 100
+	meanVal, meanExp = die.meanValueAndExpectancy()
+	plt.plot(xdata, ydata, color=color_list[color_index])
 
 
 def advantage(dice=d(20)):

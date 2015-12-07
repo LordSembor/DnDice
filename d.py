@@ -1,9 +1,8 @@
+from . import plot
 import math
+import numpy as np
 
 __author__ = 'sam <vogelsangersamuel@hotmail.com>, piMoll'
-
-import numpy as np
-import matplotlib.pyplot as plt
 
 
 # noinspection PyPep8Naming
@@ -129,7 +128,7 @@ class d(object):
 		return expectancies / np.sum(expectancies)
 
 	def plot(self):
-		plot(self)
+		plot.plot(self)
 
 	def values(self):
 		return self.data[0]
@@ -167,85 +166,6 @@ class d(object):
 		self.data = newData
 		self.length = newLength
 
-
-def plot(*dice):
-	plt.rc(
-		'lines',
-		linewidth=3,
-		marker='o',
-		markersize=8,
-		markeredgewidth=0,
-	)
-	color_index = 0
-	dice_count = 0
-	for die in dice:
-		if isinstance(die, tuple):
-			die, name = die
-		else:
-			name = "plot {}".format(dice_count)
-		plot_single_die(color_index, (die, name))
-		color_index = (color_index + 1) % len(color_list)
-		dice_count += 1
-	plt.xlabel('dice rolls')
-	plt.ylabel('likelihood (in percent)')
-	plt.title('DnDice')
-	plt.legend(loc='upper right')
-	plt.grid(True)
-	# plt.savefig("test.png")
-	plt.show()
-
-
-colors = {
-	'yellow':   '#b58900',
-	'orange':   '#cb4b16',
-	'red':      '#dc322f',
-	'magenta':  '#d33682',
-	'violet':   '#6c71c4',
-	'blue':     '#268bd2',
-	'cyan':     '#2aa198',
-	'green':    '#859900',
-}
-color_list = list(colors.values())
-
-
-def plot_single_die(color_index, die_data):
-	die, name = die_data
-	xdata = die.values()
-	ydata = die.expectancies() * 100
-	mean, std_dev = die.meanAndStdDev()
-	label = '{name} ({mean:.2f}, {std:.2f})'.format(name=name, mean=mean, std=std_dev)
-	plt.plot(
-		xdata,
-		ydata,
-		color=color_list[color_index],
-		label=label
-	)
-
-
-def advantage(dice=d(20)):
-	"""
-	@:param d dice
-	@:return d advantage
-	"""
-	if isinstance(dice, int):
-		dice = d(dice)
-	v = dice.expectancies()
-	arr = np.ones((dice.length, dice.length)) * v
-	arr = np.triu(arr, 0) + np.triu(arr, 1)
-	expectancies = np.dot(v, arr)
-
-	return d(dice.values(), expectancies, dice.length)
-
-# TODO all this
-# def highestNOf(n, dice):
-# 	if isinstance(dice, int):
-# 		dice = d(dice)
-# 	dv = dice.values()
-# 	values = n + np.arange(n * dv[0], n * dv[-1] + 1)
-# 	for combination in permutation(dv[-1], n):
-# 		pass
-#
-#
-# def permutation(m, n):
-# 	inds = np.indices((m,) * n)
-# 	return inds.reshape(n, -1).T
+if __name__ == '__main__':
+	with open('README.md', 'r') as readme:
+		print(readme.read())

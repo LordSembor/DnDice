@@ -155,11 +155,11 @@ class d(object):
 				raise TypeError("Can only layer other dice")
 
 		if self.length > 0:
-			minVal = np.min([self.values().min(), other.values().min()])
-			maxVal = np.max([self.values().max(), other.values().max()])
+			minVal = min(self.values().min(), other.values().min())
+			maxVal = max(self.values().max(), other.values().max())
 		else:
-			minVal = np.min(other.values())
-			maxVal = np.max(other.values())
+			minVal = other.values().min()
+			maxVal = other.values().max()
 
 		newValues = np.arange(minVal, maxVal + 1)
 		newLength = np.max(newValues.shape)

@@ -18,16 +18,17 @@ def advantage(dice=d(20)):
 
 
 def gwf(dice=2*d(6)):
-	result = d()
+	single_result = d()
 	count = len(dice.dice)
 	die = dice.single()
 	for val, prob in die:
 		if val < 3:
-			result.layer(die)
+			single_result.layer(die)
 		else:
-			result.layer(d([val], [1], 1))
-	result.normalizeExpectancies()
-	return count * result
+			single_result.layer(d([val], [1], 1))
+	single_result.normalizeExpectancies()
+	result = count * single_result
+	return result
 
 
 # TODO all this

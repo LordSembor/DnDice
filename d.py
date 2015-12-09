@@ -125,7 +125,7 @@ class d(object):
 
 	@staticmethod
 	def normalize(expectancies):
-		return expectancies / np.sum(expectancies)
+		return expectancies / np.sum(np.nan_to_num(expectancies))
 
 	def plot(self):
 		plot.plot(self)
@@ -152,7 +152,8 @@ class d(object):
 
 		newValues = np.arange(minVal, maxVal + 1)
 		newLength = np.max(newValues.shape)
-		newExpectancies = np.empty(newLength).fill(np.NAN)
+		newExpectancies = np.empty(newLength)
+		newExpectancies.fill(np.NAN)
 
 		otherIndex = np.where(newValues == other.data[0][0])[0][0]
 		newExpectancies[otherIndex:other.length + otherIndex] = (other.expectancies() * weight)

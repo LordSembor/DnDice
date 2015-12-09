@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 __author__ = 'sam'
 
-def plot(*dice):
+def plot(*dice, plot_mean=False):
 	plt.figure(figsize=(16, 9), dpi=80)
 	plt.rc(
 		'lines',
@@ -20,7 +20,7 @@ def plot(*dice):
 		else:
 			name = "plot {}".format(dice_count)
 			dice_count += 1
-		_plot_single_die(color_index, (die, name))
+		__plot_single_die(color_index, (die, name), plot_mean=plot_mean)
 		color_index = (color_index + 1) % len(color_list)
 	plt.xlabel('dice rolls')
 	plt.ylabel('likelihood (in percent)')
@@ -48,15 +48,25 @@ colors = {
 color_list = list(colors.values())
 
 
-def _plot_single_die(color_index, die_data):
+def __plot_single_die(color_index, die_data, plot_mean=False):
 	die, name = die_data
 	xdata = die.values()
 	ydata = die.expectancies() * 100
 	mean, std_dev = die.meanAndStdDev()
 	label = '{name} ({mean:.2f}, {std:.2f})'.format(name=name, mean=mean, std=std_dev)
+	color = color_list[color_index]
 	plt.plot(
 		xdata,
 		ydata,
-		color=color_list[color_index],
+		color=color,
 		label=label
 	)
+	if plot_mean:
+		mean, mean_expectancy = die.meanValueAndExpectancy()
+		plt.plot(
+			mean,
+			mean_expectancy * 100,
+			color=color,
+			markersize=9,
+			markeredgewidth=1
+		)

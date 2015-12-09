@@ -30,7 +30,9 @@ def plot(*dice):
 	# plt.savefig("test.png")
 	plt.show()
 
-
+"""
+The HEX values of these colors are taken from Ethan Schoonover's Solarized theme (http://ethanschoonover.com/solarized)
+"""
 colors = {
 	'yellow':   '#b58900',
 	'orange':   '#cb4b16',

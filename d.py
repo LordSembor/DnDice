@@ -134,14 +134,14 @@ class d(object):
 	def normalize(expectancies):
 		return expectancies / np.sum(np.nan_to_num(expectancies))
 
-	def plot(self, *args, plot_mean=False):
+	def plot(self, *args, draw_mean=False):
 		if len(args) > 1:
 			raise ValueError('Too many arguments')
 		if len(args) == 1:
 			plot_args = self, args[0]
 		else:
 			plot_args = self
-		dndplot.plot(plot_args, plot_mean=plot_mean)
+		dndplot.plot(plot_args, draw_mean=draw_mean)
 
 	def values(self):
 		return self.__data[0]

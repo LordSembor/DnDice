@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 __author__ = 'sam'
 
-def plot(*dice, plot_mean=False):
+def plot(*dice, draw_mean=False, show_plot=True):
 	plt.figure(figsize=(16, 9), dpi=80)
 	plt.rc(
 		'lines',
@@ -12,6 +12,7 @@ def plot(*dice, plot_mean=False):
 		markersize=8,
 		markeredgewidth=0,
 	)
+
 	color_index = 0
 	dice_count = 1
 	for die in dice:
@@ -20,15 +21,17 @@ def plot(*dice, plot_mean=False):
 		else:
 			name = "plot {}".format(dice_count)
 			dice_count += 1
-		__plot_single_die(color_index, (die, name), plot_mean=plot_mean)
+		__plot_single_die(color_index, (die, name), draw_mean=draw_mean)
 		color_index = (color_index + 1) % len(color_list)
+
 	plt.xlabel('dice rolls')
 	plt.ylabel('likelihood (in percent)')
 	plt.title('DnDice')
 	plt.legend(loc='upper right')
 	plt.grid(True)
-	# plt.savefig("test.png")
-	plt.show()
+	# plt.savefig("test.png")  # TODO: save plot support, save_plot=False
+	if show_plot:
+		plt.show()
 
 """
 The HEX values of these colors are taken from Ethan Schoonover's Solarized theme (http://ethanschoonover.com/solarized)
@@ -48,7 +51,7 @@ colors = {
 color_list = list(colors.values())
 
 
-def __plot_single_die(color_index, die_data, plot_mean=False):
+def __plot_single_die(color_index, die_data, draw_mean=False):
 	die, name = die_data
 	xdata = die.values()
 	ydata = die.expectancies() * 100
@@ -61,7 +64,7 @@ def __plot_single_die(color_index, die_data, plot_mean=False):
 		color=color,
 		label=label
 	)
-	if plot_mean:
+	if draw_mean:
 		mean, mean_expectancy = die.meanValueAndExpectancy()
 		plt.plot(
 			mean,

@@ -159,7 +159,7 @@ class d(object):
 		otherIndex = np.where(newValues == other.data[0][0])[0][0]
 
 		if self.length > 0:
-			newExpectancies[selfIndex:self.length + selfIndex] += (self.expectancies() * weight)
+			newExpectancies[selfIndex:self.length + selfIndex] += (self.expectancies())
 		newExpectancies[otherIndex:other.length + otherIndex] += (other.expectancies() * weight)
 
 		newData = np.vstack((newValues, newExpectancies))

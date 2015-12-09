@@ -112,7 +112,7 @@ class d(object):
 		values, weights -- Numpy ndarrays with the same shape.
 		"""
 		values = self.values()
-		weights = self.expectancies()
+		weights = np.nan_to_num(self.expectancies())
 		average = np.average(values, weights=weights)
 		variance = np.average((values - average) ** 2, weights=weights)  # Fast and numerically precise
 		return average, math.sqrt(variance)

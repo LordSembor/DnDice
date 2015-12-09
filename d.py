@@ -35,7 +35,7 @@ class d(object):
 		if isinstance(other, d):
 			return self.__addDice(other)
 		elif isinstance(other, (int, float)):
-			return d(self.data[0] + other, self.data[1], self.length, dice=self.dice)
+			return d(self.v + other, self.e, self.length, dice=self.dice)
 
 	def __radd__(self, other):
 		return self + other
@@ -52,7 +52,7 @@ class d(object):
 
 	def __lt__(self, other):      # TODO
 		if isinstance(other, (int, float)):
-			return np.where(self.data[0] > other, True, False)
+			return np.where(self.values() > other, True, False)
 		else:
 			raise TypeError
 
@@ -66,15 +66,23 @@ class d(object):
 		return      # TODO
 
 	def __str__(self):
-		return "dice: " + str(self.data[0])
+		return "dice: " + str(self.values())
+
+	def __getattr__(self, item):
+		if item == 'v':
+			return self.values()
+		elif item == 'e' or item == 'p':
+			return self.expectancies()
+		else:
+			raise AttributeError('Dndice.d has no such attribute')
 
 	def __addDice(self, other):
 		newLength = self.length + other.length - 1
-		newValues = np.arange(self.values()[0] + other.values()[0], self.values()[-1] + other.values()[-1] + 1)
+		newValues = np.arange(self.v[0] + other.v[0], self.v[-1] + other.v[-1] + 1)
 
 		newExpectancies = np.zeros((newLength,))
 		for i in np.arange(self.length):
-			newExpectancies[i:i + other.length] += (np.nan_to_num(self.data[1, i]) * np.nan_to_num(other.data[1]))
+			newExpectancies[i:i + other.length] += (self.e[i] * other.e)
 		# newExpectancies = d.normalize(newExpectancies)
 
 		return d(newValues, newExpectancies, newLength, dice=self.dice + other.dice)
@@ -89,17 +97,17 @@ class d(object):
 
 	@DeprecationWarning  # Currently not used
 	def meanValueWeighted(self):
-		return np.average(self.data[0], weights=self.data[1])
+		return np.average(self.values(), weights=self.expectancies())
 
 	def meanValueAndExpectancy(self):
 		index = self.meanIndex()
 		index_int = np.floor(index)
 
-		values = self.data[0]
+		values = self.values()
 		valueBounds = values[index_int:index_int + 2]
 		value = valueBounds[0] + (index % 1) * (valueBounds[1] - valueBounds[0])
 
-		expectancies = self.data[1]
+		expectancies = self.expectancies()
 		expectancyBounds = expectancies[index_int:index_int + 2]
 		expectancy = expectancyBounds[0] + (index % 1) * (expectancyBounds[1] - expectancyBounds[0])
 
@@ -118,10 +126,10 @@ class d(object):
 		return average, math.sqrt(variance)
 
 	def meanIndex(self):
-		return np.average(np.arange(self.length), weights=self.data[1])
+		return np.average(np.arange(self.length), weights=self.expectancies())
 
 	def normalizeExpectancies(self):
-		self.data[1] = d.normalize(self.data[1])
+		self.data[1] = d.normalize(self.expectancies())
 
 	@staticmethod
 	def normalize(expectancies):
@@ -134,7 +142,7 @@ class d(object):
 		return self.data[0]
 
 	def expectancies(self):
-		return self.data[1]
+		return np.nan_to_num(self.data[1])
 
 	def single(self, index=0):
 		return self.dice[index]
@@ -155,11 +163,11 @@ class d(object):
 		newExpectancies = np.empty(newLength)
 		newExpectancies.fill(np.NAN)
 
-		otherIndex = np.where(newValues == other.data[0][0])[0][0]
+		otherIndex = np.where(newValues == other.values()[0])[0][0]
 		newExpectancies[otherIndex:other.length + otherIndex] = (other.expectancies() * weight)
 
 		if self.length > 0:
-			selfIndex = np.where(newValues == self.data[0][0])[0][0]
+			selfIndex = np.where(newValues == self.values()[0])[0][0]
 			newExpectancies[selfIndex:self.length + selfIndex] = \
 				np.nan_to_num(newExpectancies[selfIndex:self.length + selfIndex]) + self.expectancies()
 

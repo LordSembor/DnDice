@@ -1,10 +1,10 @@
-# Readme
+# DnDice
 
-His is a module that calculates and prints value-probabiliy distributions of dice rolls as commonly used in tabletop roleplay games such as 'Dungeon & Dragons®'
+This is a module that calculates and prints value-probabiliy distributions of dice rolls as commonly used in tabletop roleplay games such as 'Dungeon & Dragons®' (I haven't actually looked at what games other than D&D 5e might require.)
 
 # Examples
 
-This shows the basic dice rolling syntax, and how the probabilities are expressed. Notice that the +5 inside the gwf function is stripped.
+This shows the basic dice rolling syntax, and how the probabilities are expressed. Notice that the +5 inside the gwf function is stripped:
 
 ```python
 from DnDice import d, gwf
@@ -18,7 +18,7 @@ print(single_attack) # dice: [2, 3, 4, 5, 6, 7, 8, ,9, 10, 11, 12]
 print(single_attack.expectancies()) # [0.03, 0.06, 0.27, 0.49, ...]
 ```
 
-Advanced syntax where the dice rolled are dependent on a first roll
+If you have cases where the dice rolled are dependent on a separate roll:
 
 ```python
 from DnDice import d, advantage, plot

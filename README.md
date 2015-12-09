@@ -42,4 +42,4 @@ plot(
 	(result, "weighted by an advantage d20")
 )
 ```
-![graph of normal and critical hit, and their weighted probabilities](/doc/img/weighting_example.png)
+![graph of normal and critical hit, and their weighted probabilities](/doc/img/weighting_example.png "graph of normal and critical hit, and their weighted probabilities")

@@ -152,15 +152,15 @@ class d(object):
 
 		newValues = np.arange(minVal, maxVal + 1)
 		newLength = np.max(newValues.shape)
-		newExpectancies = np.zeros(newLength)
+		newExpectancies = np.empty(newLength).fill(np.NAN)
+
+		otherIndex = np.where(newValues == other.data[0][0])[0][0]
+		newExpectancies[otherIndex:other.length + otherIndex] = (other.expectancies() * weight)
 
 		if self.length > 0:
 			selfIndex = np.where(newValues == self.data[0][0])[0][0]
-		otherIndex = np.where(newValues == other.data[0][0])[0][0]
-
-		if self.length > 0:
-			newExpectancies[selfIndex:self.length + selfIndex] += (self.expectancies())
-		newExpectancies[otherIndex:other.length + otherIndex] += (other.expectancies() * weight)
+			newExpectancies[selfIndex:self.length + selfIndex] = \
+				np.nan_to_num(newExpectancies[selfIndex:self.length + selfIndex]) + self.expectancies()
 
 		newData = np.vstack((newValues, newExpectancies))
 		self.data = newData

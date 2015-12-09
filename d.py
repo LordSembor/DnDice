@@ -149,7 +149,10 @@ class d(object):
 
 	def layer(self, other, weight=1):
 		if not isinstance(other, d):
-			raise TypeError("Can only layer other dice")
+			if isinstance(other, (int, float)):
+				other = d([other], [1], 1)
+			else:
+				raise TypeError("Can only layer other dice")
 
 		if self.length > 0:
 			minVal = np.min([self.values().min(), other.values().min()])

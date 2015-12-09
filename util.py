@@ -25,7 +25,7 @@ def gwf(dice=2*d(6)):
 		if val < 3:
 			single_result.layer(die)
 		else:
-			single_result.layer(d([val], [1], 1))
+			single_result.layer(val)
 	single_result.normalizeExpectancies()
 	result = count * single_result
 	return result

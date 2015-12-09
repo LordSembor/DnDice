@@ -74,7 +74,7 @@ class d(object):
 
 		newExpectancies = np.zeros((newLength,))
 		for i in np.arange(self.length):
-			newExpectancies[i:i + other.length] += (self.data[1, i] * other.data[1])
+			newExpectancies[i:i + other.length] += (np.nan_to_num(self.data[1, i]) * np.nan_to_num(other.data[1]))
 		# newExpectancies = d.normalize(newExpectancies)
 
 		return d(newValues, newExpectancies, newLength, dice=self.dice + other.dice)

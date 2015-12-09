@@ -1,4 +1,4 @@
-from . import plot
+from . import plot as dndplot
 import math
 import numpy as np
 
@@ -9,25 +9,24 @@ __author__ = 'sam <vogelsangersamuel@hotmail.com>, piMoll'
 class d(object):
 	def __init__(self, *args, **kwargs):
 		if len(args) == 0:
-			self.data = np.array([[], []])
+			self.__data = np.array([[], []])
 			self.length = 0
 		elif len(args) == 1:
 			faces = args[0]
 			if faces > 0:
-				self.data = np.array([np.arange(faces) + 1, np.ones(faces)])
-				self.normalizeExpectancies()
+				self.__data = np.array([np.arange(faces) + 1, np.ones(faces) / faces])
 				self.length = faces
 			else:
-				self.data = np.array([[0], [1]])
+				self.__data = np.array([[0], [1]])
 				self.length = 1
 		elif len(args) == 2:
-			self.data = args[0]
+			self.__data = args[0]
 			self.length = args[1]
 		elif len(args) == 3:
-			self.data = np.vstack((args[0], args[1]))
+			self.__data = np.vstack((args[0], args[1]))
 			self.length = args[2]
 		elif all(x in kwargs.keys() for x in ['values', 'length']):
-			self.data = np.vstack((kwargs.get("values"), kwargs.get("length")))
+			self.__data = np.vstack((kwargs.get("values"), kwargs.get("length")))
 			self.length = kwargs.get("length")
 		self.dice = kwargs.get('dice', [self])
 
@@ -42,13 +41,13 @@ class d(object):
 
 	def __mul__(self, other):
 		if isinstance(other, int):
-			return self.times(other)
+			return self.__times(other)
 
 	def __rmul__(self, other):
 		return self * other
 
 	def __iter__(self):
-		return iter(np.swapaxes(self.data, 0, 1))
+		return iter(np.swapaxes(self.__data, 0, 1))
 
 	def __lt__(self, other):      # TODO
 		if isinstance(other, (int, float)):
@@ -87,13 +86,13 @@ class d(object):
 
 		return d(newValues, newExpectancies, newLength, dice=self.dice + other.dice)
 
-	def times(self, factor):
+	def __times(self, factor):
 		if factor == 0:
 			return d(0)
 		elif factor == 1:
 			return self
 		else:
-			return self.__addDice(self.times(factor - 1))
+			return self.__addDice(self.__times(factor - 1))
 
 	@DeprecationWarning  # Currently not used
 	def meanValueWeighted(self):
@@ -113,6 +112,9 @@ class d(object):
 
 		return value, expectancy
 
+	def meanIndex(self):
+		return np.average(np.arange(self.length), weights=self.expectancies())
+
 	def meanAndStdDev(self):
 		"""
 		Return the weighted average and standard deviation.
@@ -125,24 +127,24 @@ class d(object):
 		variance = np.average((values - average) ** 2, weights=weights)  # Fast and numerically precise
 		return average, math.sqrt(variance)
 
-	def meanIndex(self):
-		return np.average(np.arange(self.length), weights=self.expectancies())
-
 	def normalizeExpectancies(self):
-		self.data[1] = d.normalize(self.expectancies())
+		self.__data[1] = d.normalize(self.expectancies())
 
 	@staticmethod
 	def normalize(expectancies):
 		return expectancies / np.sum(np.nan_to_num(expectancies))
 
-	def plot(self):
-		plot.plot(self)
+	def plot(self, *args):
+		if len(args) > 1:
+			raise ValueError('Too many arguments')
+		else:
+			dndplot.plot((self, args[0]) if len(args) == 1 else self)
 
 	def values(self):
-		return self.data[0]
+		return self.__data[0]
 
 	def expectancies(self):
-		return np.nan_to_num(self.data[1])
+		return np.nan_to_num(self.__data[1])
 
 	def single(self, index=0):
 		return self.dice[index]
@@ -175,7 +177,7 @@ class d(object):
 				np.nan_to_num(newExpectancies[selfIndex:self.length + selfIndex]) + self.expectancies()
 
 		newData = np.vstack((newValues, newExpectancies))
-		self.data = newData
+		self.__data = newData
 		self.length = newLength
 
 if __name__ == '__main__':

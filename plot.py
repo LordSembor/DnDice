@@ -33,10 +33,11 @@ def plot(*dice, draw_mean=False, show_plot=True):
 	if show_plot:
 		plt.show()
 
-"""
-The HEX values of these colors are taken from Ethan Schoonover's Solarized theme (http://ethanschoonover.com/solarized)
-"""
+
 colors = {
+	"""
+	The HEX values of these colors are taken from Ethan Schoonover's Solarized theme (http://ethanschoonover.com/solarized)
+	"""
 	'yellow':   '#b58900',
 	'orange':   '#cb4b16',
 	'red':      '#dc322f',
@@ -45,6 +46,7 @@ colors = {
 	'blue':     '#268bd2',
 	'cyan':     '#2aa198',
 	'green':    '#859900',
+	'black':    '#000000',
 }
 
 

@@ -7,14 +7,7 @@ def advantage(dice=d(20)):
 	@:param d dice
 	@:return d advantage
 	"""
-	if isinstance(dice, int):
-		dice = d(dice)
-	v = dice.expectancies()
-	arr = np.ones((dice.length, dice.length)) * v
-	arr = np.triu(arr, 0) + np.triu(arr, 1)
-	expectancies = np.dot(v, arr)
-
-	return d(dice.values(), expectancies, dice.length)
+	return highest_of(2*dice)
 
 
 def gwf(dice=2*d(6)):
@@ -31,16 +24,23 @@ def gwf(dice=2*d(6)):
 	return result
 
 
-# TODO all this
-# def highestNOf(n, dice):
-# 	if isinstance(dice, int):
-# 		dice = d(dice)
-# 	dv = dice.values()
-# 	values = n + np.arange(n * dv[0], n * dv[-1] + 1)
-# 	for combination in permutation(dv[-1], n):
-# 		pass
-#
-#
-# def permutation(m, n):
-# 	inds = np.indices((m,) * n)
-# 	return inds.reshape(n, -1).T
+def highest_of(dice):
+	v, e, l = __extrema_dice(dice)
+	return d(v, e, l)
+
+
+def lowest_of(dice):
+	v, e, l = __extrema_dice(dice)
+	return d(v, e[::-1], l)
+
+def __extrema_dice(dice):
+	if not isinstance(dice, d):
+		raise ValueError
+	dice_count = len(dice.dice)
+	faces = dice.single().length
+	helper = np.arange(0, faces+1)**dice_count
+	counts = helper[1:] - helper[:-1]
+	expectancies = counts * (1/faces)**dice_count
+	values = np.arange(faces) + 1
+	return values, expectancies, faces
+

@@ -16,7 +16,10 @@ print(single_attack.expectancies()) # [0.03, 0.06, 0.08, 0.11, ...]
 great_weapon_fighting_attack = gwf(2*d(6) + 5)
 print(single_attack) # dice: [2, 3, 4, 5, 6, 7, 8, ,9, 10, 11, 12]
 print(single_attack.expectancies()) # [0.03, 0.06, 0.27, 0.49, ...]
+
+plot((single_attack, 'normal 2d6'), (great_weapon_fighting, '2d6 with Great weapon fighting feat'))
 ```
+![graph of 2d6 vs 2d6 with Great weapon fighting feat](/doc/img/gwf_example.png "graph of 2d6 vs 2d6 with Great weapon fighting feat")
 
 Advanced syntax where the dice rolled are dependent on a first roll
 

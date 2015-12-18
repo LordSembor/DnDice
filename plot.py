@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 
-
 __author__ = 'sam'
 
-def plot(*dice, draw_mean=False, show_plot=True):
+
+def plot(*dice, draw_mean=False, show_plot=True, title=None):
 	plt.figure(figsize=(16, 9), dpi=80)
 	plt.rc(
 		'lines',
@@ -24,9 +24,10 @@ def plot(*dice, draw_mean=False, show_plot=True):
 		__plot_single_die(color_index, (die, name), draw_mean=draw_mean)
 		color_index = (color_index + 1) % len(color_list)
 
-	plt.xlabel('dice rolls')
+	plt.xlabel('dice roll value')
 	plt.ylabel('likelihood (in percent)')
-	plt.title('DnDice')
+	plt.title('DnDice' if title is None else title)
+	plt.ylim(ymin=0)
 	plt.legend(loc='upper right')
 	plt.grid(True)
 	# plt.savefig("test.png")  # TODO: save plot support, save_plot=False

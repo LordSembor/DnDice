@@ -53,10 +53,10 @@ def __plot_single_die(color_index, die_data, draw_mean=False, mode='normal'):
 	die, name = die_data
 	xdata = die.values()
 	_ydata = die.expectancies()
-	if mode in plot_modes:
-		ydata = map(plot_modes[mode], [_ydata])
+	if mode in plot_modes.keys():
+		ydata = plot_modes[mode](_ydata)
 	else:
-		raise ValueError('No such mode available: {}. Available modes: {}'.format(mode, ', '.join(plot_modes.values())))
+		raise ValueError('No such mode available: {}. Available modes: {}'.format(mode, ', '.join(plot_modes.keys())))
 	mean, std_dev = die.meanAndStdDev()
 	label = '{name} ({mean:.2f}, {std:.2f})'.format(name=name, mean=mean, std=std_dev)
 	color = color_list[color_index]

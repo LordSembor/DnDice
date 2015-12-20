@@ -32,7 +32,7 @@ class d(object):
 
 	def __add__(self, other):
 		if isinstance(other, d):
-			return self.__addDice(other)
+			return self.__add_dice(other)
 		elif isinstance(other, (int, float)):
 			return d(self.v + other, self.e, self.length, dice=self.dice)
 
@@ -75,7 +75,7 @@ class d(object):
 		else:
 			raise AttributeError('Dndice.d has no such attribute')
 
-	def __addDice(self, other):
+	def __add_dice(self, other):
 		newLength = self.length + other.length - 1
 		newValues = np.arange(self.v[0] + other.v[0], self.v[-1] + other.v[-1] + 1)
 
@@ -92,14 +92,14 @@ class d(object):
 		elif factor == 1:
 			return self
 		else:
-			return self.__addDice(self.__times(factor - 1))
+			return self.__add_dice(self.__times(factor - 1))
 
 	@DeprecationWarning  # Currently not used
-	def meanValueWeighted(self):
+	def mean_value_weighted(self):
 		return np.average(self.values(), weights=self.expectancies())
 
-	def meanValueAndExpectancy(self):
-		index = self.meanIndex()
+	def mean_value_and_expectancy(self):
+		index = self.mean_index()
 		index_int = np.floor(index)
 
 		values = self.values()
@@ -107,15 +107,15 @@ class d(object):
 		value = valueBounds[0] + (index % 1) * (valueBounds[1] - valueBounds[0])
 
 		expectancies = self.expectancies()
-		expectancyBounds = expectancies[index_int:index_int + 2]
-		expectancy = expectancyBounds[0] + (index % 1) * (expectancyBounds[1] - expectancyBounds[0])
+		expectancy_bounds = expectancies[index_int:index_int + 2]
+		expectancy = expectancy_bounds[0] + (index % 1) * (expectancy_bounds[1] - expectancy_bounds[0])
 
 		return value, expectancy
 
-	def meanIndex(self):
+	def mean_index(self):
 		return np.average(np.arange(self.length), weights=self.expectancies())
 
-	def meanAndStdDev(self):
+	def mean_and_std_dev(self):
 		"""
 		Return the weighted average and standard deviation.
 
@@ -127,7 +127,7 @@ class d(object):
 		variance = np.average((values - average) ** 2, weights=weights)  # Fast and numerically precise
 		return average, math.sqrt(variance)
 
-	def normalizeExpectancies(self):
+	def normalize_expectancies(self):
 		self.__data[1] = d.normalize(self.expectancies())
 
 	@staticmethod

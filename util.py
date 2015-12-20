@@ -11,8 +11,22 @@ def gwf(dice=2*d(6)):
 			single_result.layer(die)
 		else:
 			single_result.layer(val)
-	single_result.normalizeExpectancies()
+	single_result.normalize_expectancies()
 	result = count * single_result
+	return result
+
+
+def single_attack(hit, crit, mod, prof, ac=14, attack_roll=d(20)):
+	result = d()
+	for val, prob in attack_roll:
+		if (val + mod + prof) >= ac:
+			if val == 20:
+				result.layer(crit, prob)
+			else:
+				result.layer(hit, prob)
+		else:
+			result.layer(d(0), prob)
+	result.normalize_expectancies()
 	return result
 
 

@@ -1,11 +1,12 @@
 import matplotlib.pyplot as plt
 import os
+import numpy as np
 
 
 __author__ = 'sam'
 
 
-def plot(*dice, draw_mean=False, show_plot=True, title=None, save_plot=False, overwrite_file=False):
+def plot(*dice, draw_mean=False, show_plot=True, title=None, save_plot=False, overwrite_file=False, mode='normal'):
 	plt.figure(figsize=(16, 9), dpi=80)
 	plt.rc(
 		'lines',
@@ -23,7 +24,7 @@ def plot(*dice, draw_mean=False, show_plot=True, title=None, save_plot=False, ov
 		else:
 			name = "plot {}".format(dice_count)
 			dice_count += 1
-		__plot_single_die(color_index, (die, name), draw_mean=draw_mean)
+		__plot_single_die(color_index, (die, name), draw_mean=draw_mean, mode=mode)
 		color_index = (color_index + 1) % len(color_list)
 
 	# figure = plt.figure() # TODO: improve pyplot usage
@@ -48,10 +49,14 @@ def plot(*dice, draw_mean=False, show_plot=True, title=None, save_plot=False, ov
 		plt.show()
 
 
-def __plot_single_die(color_index, die_data, draw_mean=False):
+def __plot_single_die(color_index, die_data, draw_mean=False, mode='normal'):
 	die, name = die_data
 	xdata = die.values()
-	ydata = die.expectancies() * 100
+	_ydata = die.expectancies()
+	if mode in plot_modes:
+		ydata = map(plot_modes[mode], [_ydata])
+	else:
+		raise ValueError('No such mode available: {}. Available modes: {}'.format(mode, ', '.join(plot_modes.values())))
 	mean, std_dev = die.meanAndStdDev()
 	label = '{name} ({mean:.2f}, {std:.2f})'.format(name=name, mean=mean, std=std_dev)
 	color = color_list[color_index]
@@ -71,7 +76,6 @@ def __plot_single_die(color_index, die_data, draw_mean=False):
 			markeredgewidth=1
 		)
 
-
 colors = {
 	"""
 	The HEX values of these colors are taken from Ethan Schoonover's Solarized theme (http://ethanschoonover.com/solarized)
@@ -88,3 +92,9 @@ colors = {
 }
 
 color_list = list(colors.values())
+
+plot_modes = {
+	'normal': lambda ydata: ydata*100,
+	'atLeast': lambda ydata: np.array([ydata[i:].sum() for i in np.arange(len(ydata))])*100,
+	'atMost': lambda ydata: np.array([ydata[:i+1].sum() for i in np.arange(len(ydata))])*100
+}

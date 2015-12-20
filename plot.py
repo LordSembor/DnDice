@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import os
-import warnings
 
 
 __author__ = 'sam'
@@ -27,7 +26,7 @@ def plot(*dice, draw_mean=False, show_plot=True, title=None, save_plot=False, ov
 		__plot_single_die(color_index, (die, name), draw_mean=draw_mean)
 		color_index = (color_index + 1) % len(color_list)
 
-	# figure = plt.figure()
+	# figure = plt.figure() # TODO: improve pyplot usage
 	plt.xlabel('dice roll value')
 	plt.ylabel('likelihood (in percent)')
 	plt.title('DnDice' if title is None else title)

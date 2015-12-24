@@ -76,15 +76,14 @@ class d(object):
 			raise AttributeError('Dndice.d has no such attribute')
 
 	def __add_dice(self, other):
-		newLength = self.length + other.length - 1
-		newValues = np.arange(self.v[0] + other.v[0], self.v[-1] + other.v[-1] + 1)
+		new_length = self.length + other.length - 1
+		new_values = np.arange(self.v[0] + other.v[0], self.v[-1] + other.v[-1] + 1)
 
-		newExpectancies = np.zeros((newLength,))
+		new_expectancies = np.zeros((new_length,))
 		for i in np.arange(self.length):
-			newExpectancies[i:i + other.length] += (self.e[i] * other.e)
-		# newExpectancies = d.normalize(newExpectancies)
+			new_expectancies[i:i + other.length] += (self.e[i] * other.e)
 
-		return d(newValues, newExpectancies, newLength, dice=self.dice + other.dice)
+		return d(new_values, new_expectancies, new_length, dice=self.dice+other.dice)
 
 	def __times(self, factor):
 		if factor == 0:
@@ -103,8 +102,8 @@ class d(object):
 		index_int = np.floor(index)
 
 		values = self.values()
-		valueBounds = values[index_int:index_int + 2]
-		value = valueBounds[0] + (index % 1) * (valueBounds[1] - valueBounds[0])
+		value_bounds = values[index_int:index_int + 2]
+		value = value_bounds[0] + (index % 1) * (value_bounds[1] - value_bounds[0])
 
 		expectancies = self.expectancies()
 		expectancy_bounds = expectancies[index_int:index_int + 2]
@@ -160,28 +159,29 @@ class d(object):
 				raise TypeError("Can only layer other dice")
 
 		if self.length > 0:
-			minVal = min(self.values().min(), other.values().min())
-			maxVal = max(self.values().max(), other.values().max())
+			min_val = min(self.values().min(), other.values().min())
+			max_val = max(self.values().max(), other.values().max())
 		else:
-			minVal = other.values().min()
-			maxVal = other.values().max()
+			min_val = other.values().min()
+			max_val = other.values().max()
 
-		newValues = np.arange(minVal, maxVal + 1)
-		newLength = np.max(newValues.shape)
-		newExpectancies = np.empty(newLength)
-		newExpectancies.fill(np.NAN)
+		new_values = np.arange(min_val, max_val + 1)
+		new_length = np.max(new_values.shape)
+		new_expectancies = np.empty(new_length)
+		new_expectancies.fill(np.NAN)
 
-		otherIndex = np.where(newValues == other.values()[0])[0][0]
-		newExpectancies[otherIndex:other.length + otherIndex] = (other.expectancies() * weight)
+		other_index = np.where(new_values == other.values()[0])[0][0]
+		new_expectancies[other_index:other.length + other_index] = (other.expectancies() * weight)
 
 		if self.length > 0:
-			selfIndex = np.where(newValues == self.values()[0])[0][0]
-			newExpectancies[selfIndex:self.length + selfIndex] = \
-				np.nan_to_num(newExpectancies[selfIndex:self.length + selfIndex]) + self.expectancies()
+			self_index = np.where(new_values == self.values()[0])[0][0]
+			new_expectancies[self_index:self.length + self_index] = \
+				np.nan_to_num(new_expectancies[self_index:self.length + self_index]) + self.expectancies()
+				# TODO: this overwrites the initial self NaN's, that shouldn't happen
 
-		newData = np.vstack((newValues, newExpectancies))
-		self.__data = newData
-		self.length = newLength
+		new_data = np.vstack((new_values, new_expectancies))
+		self.__data = new_data
+		self.length = new_length
 
 if __name__ == '__main__':
 	with open('README.md', 'r') as readme:

@@ -1,4 +1,4 @@
-from . import plot as dndplot
+from .plot import plot as dndplot
 import math
 import numpy as np
 
@@ -128,6 +128,7 @@ class d(object):
 
 	def normalize_expectancies(self):
 		self.__data[1] = d.normalize(self.expectancies())
+		return self
 
 	@staticmethod
 	def normalize(expectancies):

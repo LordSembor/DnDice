@@ -1,8 +1,10 @@
+__author__ = 'sam <vogelsangersamuel@hotmail.com>, piMoll'
+
 from .plot import plot as dndplot
 import math
 import numpy as np
 
-__author__ = 'sam <vogelsangersamuel@hotmail.com>, piMoll'
+SIGNIFICANT_DECIMALS = 8
 
 
 # noinspection PyPep8Naming
@@ -49,6 +51,16 @@ class d(object):
 	def __iter__(self):
 		return iter(np.swapaxes(self.__data, 0, 1))
 
+	def __eq__(self, other):
+		if isinstance(other, d):
+			if self.__data.shape == other.__data.shape:
+				return (np.around(self.__data, decimals=SIGNIFICANT_DECIMALS) ==
+					np.around(other.__data, decimals=SIGNIFICANT_DECIMALS)).all()
+			else:
+				return False
+		else:
+			raise TypeError('equality to integers is not yet implemented')
+
 	def __lt__(self, other):      # TODO
 		if isinstance(other, (int, float)):
 			return np.where(self.values() > other, True, False)
@@ -74,6 +86,11 @@ class d(object):
 			return self.expectancies()
 		else:
 			raise AttributeError('Dndice.d has no such attribute')
+
+	def __hash__(self):
+		to_hash = np.around(self.__data, decimals=SIGNIFICANT_DECIMALS)
+		to_hash = to_hash.tolist()
+		return hash(str(to_hash))
 
 	def __add_dice(self, other):
 		new_length = self.length + other.length - 1
@@ -123,7 +140,7 @@ class d(object):
 		values = self.values()
 		weights = np.nan_to_num(self.expectancies())
 		average = np.average(values, weights=weights)
-		variance = np.average((values - average) ** 2, weights=weights)  # Fast and numerically precise
+		variance = np.average((values - average) ** 2, weights=weights)
 		return average, math.sqrt(variance)
 
 	def normalize_expectancies(self):

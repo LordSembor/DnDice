@@ -17,13 +17,13 @@ def gwf(dice=2*d(6)):
 
 
 def single_attack(hit, crit, mod, prof, ac=14, attack_roll=d(20), gwm=False):
-
 	if gwm and __get_gwm_decision(hit, mod, prof, ac, attack_roll):
 		gwm_bonus = 10
 		gwm_malus = 5
 	else:
 		gwm_bonus = 0
 		gwm_malus = 0
+
 	result = d()
 	for val, prob in attack_roll:
 		if (val + mod + prof - gwm_malus) >= ac:

@@ -79,13 +79,13 @@ class d(object):
 	def __str__(self):
 		return "dice: " + str(self.values())
 
-	def __getattr__(self, item):
-		if item == 'v':
+	def __getattr__(self, attr):
+		if attr == 'v':
 			return self.values()
-		elif item == 'e' or item == 'p':
+		elif attr == 'e' or attr == 'p':
 			return self.expectancies()
 		else:
-			raise AttributeError('Dndice.d has no such attribute')
+			return super().__getattribute__(attr)
 
 	def __hash__(self):
 		to_hash = np.around(self.__data, decimals=SIGNIFICANT_DECIMALS)
@@ -200,6 +200,11 @@ class d(object):
 		new_data = np.vstack((new_values, new_expectancies))
 		self.__data = new_data
 		self.length = new_length
+
+	def layer_single(self, other, probability):
+		weight = probability / (1 - probability)
+		self.layer(other, weight=weight)
+		return self.normalize_expectancies()
 
 if __name__ == '__main__':
 	with open('README.md', 'r') as readme:

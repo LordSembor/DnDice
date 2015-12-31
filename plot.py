@@ -36,6 +36,11 @@ def plot(*dice, draw_mean=False, show_plot=True, title=None, save_plot=False, ov
 	plt.grid(True)
 
 	if save_plot:
+		if not isinstance(save_plot, str):
+			if title is not None:
+				save_plot = title
+			else:
+				raise ValueError("No filename specified to save plot. Use either 'title=\"name.png\"' or 'save_plot=\"name.png\"'")
 		if not overwrite_file and os.path.isfile(save_plot):
 			message = "The file '{}' already exists. Use 'overwrite_file=True' to overwrite or use another name.".format(save_plot)
 			raise FileExistsError(message)

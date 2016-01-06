@@ -22,7 +22,7 @@ class d(object):
 				self.__data = np.array([[0], [1]])
 				self.length = 1
 		elif len(args) == 2:
-			self.__data = args[0]
+			self.__data = np.array(args[0])
 			self.length = args[1]
 		elif len(args) == 3:
 			self.__data = np.vstack((args[0], args[1]))
@@ -97,8 +97,11 @@ class d(object):
 		new_values = np.arange(self.v[0] + other.v[0], self.v[-1] + other.v[-1] + 1)
 
 		new_expectancies = np.zeros((new_length,))
+		new_expectancies.fill(np.nan)
 		for i in np.arange(self.length):
-			new_expectancies[i:i + other.length] += (self.e[i] * other.e)
+			current_slice = new_expectancies[i:i + other.length]
+			additional_slice = other.e * self.e[i]
+			new_expectancies[i:i + other.length] = np.nansum(np.vstack((current_slice, additional_slice)), 0)
 
 		return d(new_values, new_expectancies, new_length, dice=self.dice+other.dice)
 
@@ -164,7 +167,7 @@ class d(object):
 		return self.__data[0]
 
 	def expectancies(self):
-		return np.nan_to_num(self.__data[1])
+		return self.__data[1]
 
 	def single(self, index=0):
 		return self.dice[index]
@@ -193,13 +196,14 @@ class d(object):
 
 		if self.length > 0:
 			self_index = np.where(new_values == self.values()[0])[0][0]
-			new_expectancies[self_index:self.length + self_index] = \
-				np.nan_to_num(new_expectancies[self_index:self.length + self_index]) + self.expectancies()
-				# TODO: this overwrites the initial self NaN's, that shouldn't happen
+			current_slice = new_expectancies[self_index:self.length + self_index]
+			new_slice = np.nansum(np.vstack((current_slice, self.expectancies())), 0)
+			new_expectancies[self_index:self.length + self_index] = new_slice
 
 		new_data = np.vstack((new_values, new_expectancies))
 		self.__data = new_data
 		self.length = new_length
+		return self
 
 	def layer_single(self, other, probability):
 		weight = probability / (1 - probability)
